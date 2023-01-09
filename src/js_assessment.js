@@ -80,11 +80,45 @@ String.prototype.symmetricSubstrings = function() {
 // Do not capitalize the following words (unless they are the first word in the 
 // string): ["a", "and", "of", "over", "the"]
 
+function titleize(str) {
+    let littleWords = ["a", "and", "of", "over", "the"]
+    let words = str.split(" ")
+    let newArr = []
+
+    for (let i = 0; i < words.length; i++) {
+        if (i === 0 || !littleWords.includes(words[i])) {
+            newArr.push(words[i].slice(0,1).toUpperCase() + words[i].slice(1)) 
+                
+        } else {
+            newArr.push(words[i])
+        }
+    }
+    return newArr.join(" ")
+}
+
+
 // Write an `Array.prototype.quickSort(callback)` method that quick sorts an array. 
 // It should take an optional callback that compares two elements, returning -1 
 // if the first element should appear before the second, 0 if they are equal, and
 // 1 if the first element should appear after the second. Do NOT call the 
 // built-in Array.prototype.sort method in your implementation.
+
+Array.prototype.quickSort = function(callback=(ele, pvt) => ele < pvt ? -1 : 1){
+    if (this.length <= 1) return this
+
+    let left = []
+    let right = []
+    let pvt = this[this.length-1]
+    for (let i = 0; i < this.length-1; i++){
+        if (callback(this[i], pvt) < 0){
+            left.push(this[i])
+        } else {
+            right.push(this[i])
+        }
+    }
+    return left.quickSort(callback).concat([pvt], right.quickSort(callback))
+}
+
 //
 // Here's a summary of the quick sort algorithm:
 //
@@ -105,6 +139,25 @@ String.prototype.symmetricSubstrings = function() {
 // jumbleSort("hello") => "ehllo"
 // jumbleSort("hello", ['o', 'l', 'h', 'e']) => 'ollhe'
 
+function jumbleSort(string, alphabet){
+     alphabet = alphabet || 'abcdefghijklmnopqrstuvwxyz'.split("")
+    let letters = string.split("")
+    let sorted = false 
+    while (!sorted) {
+        sorted = true
+
+        for(let i = 0; i < letters.length-1; i++){
+            if (alphabet.indexOf(letters[i]) > alphabet.indexOf(letters[i+1])){
+                let swap = letters[i]
+                letters[i] = letters[i+1]
+                letters[i+1] = swap
+                sorted = false 
+            }
+        }
+    }
+    return letters.join("")
+}
+
 // Write a recursive function, `binarySearch(sortedArray, target)`, that returns
 // the index of `target` in `sortedArray`, or -1 if it is not found. Do NOT use
 // the built-in `Array.prototype.indexOf` or `Array.prototype.includes` methods 
@@ -116,6 +169,22 @@ String.prototype.symmetricSubstrings = function() {
 // return its index. Otherwise, recursively search either the left or the right
 // half of the array until the target is found or the base case (empty array) is
 // reached.
+
+function binarySearch(sortedArray, target){
+    if (sortedArray.length === 0) return -1
+    let mid = Math.floor(sortedArray.length/2)
+    let left = sortedArray.slice(0,mid)
+    let right = sortedArray.slice(mid+1)
+
+    if (sortedArray[mid] === target){
+        return mid
+    } else if (target < sortedArray[mid]) {
+        return binarySearch(left, target)
+    } else {
+        let res = binarySearch(right, target)
+        return res === -1 ? -1 : mid + 1 + res
+    }
+}
 
 // Write an `Array.prototype.mergeSort` method that merge sorts an array. It
 // should take an optional callback that compares two elements, returning -1 if 
@@ -132,6 +201,31 @@ String.prototype.symmetricSubstrings = function() {
 // Split the array into left and right halves, then merge sort them recursively
 // until a base case is reached. Use a helper method, merge, to combine the
 // halves in sorted order, and return the merged array.
+
+Array.prototype.mergeSort = function(callback=(a, b) => a < b ? -1 : 1){
+    if (this.length <= 1) return this 
+
+    let mid = Math.floor(this.length/2)
+    let sortedLeft = this.slice(0,mid).mergeSort(callback)
+    let sortedRight = this.slice(mid).mergeSort(callback)
+
+    return merge(sortedLeft, sortedRight, callback)
+}
+
+function merge(sortedLeft, sortedRight, callback){
+    let arr = []
+
+    while (sortedLeft.length && sortedRight.length){
+        // if sortedLeft[0] < sortedRight[0] = -1
+        //if sortedLeft[0] > sortedRight[0] = 1
+        if (callback(sortedLeft[0], sortedRight[0]) === -1){
+            arr.push(sortedLeft.shift())
+        } else {
+            arr.push(sortedRight.shift())
+        }
+    }
+    return arr.concat(sortedLeft, sortedRight)
+}
 
 // Write an `Array.prototype.bubbleSort(callback)` method, that bubble sorts an array.
 // It should take an optional callback that compares two elements, returning
