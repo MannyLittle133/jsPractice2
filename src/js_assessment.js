@@ -106,7 +106,7 @@ function titleize(str) {
 Array.prototype.quickSort = function(callback=(ele, pvt) => ele < pvt ? -1 : 1){
     if (this.length <= 1) return this
 
-    let left = []
+    let left = []   
     let right = []
     let pvt = this[this.length-1]
     for (let i = 0; i < this.length-1; i++){
@@ -240,6 +240,9 @@ function merge(sortedLeft, sortedRight, callback){
 // with respect to the next element, swap them. If any swaps are made before
 // reaching the end of the array, repeat the process. Otherwise, return the
 // sorted array.
+
+
+
 
 // Write a function, `deepDup(arr)`, that will perform a "deep" duplication of
 // the array and any interior arrays. A deep duplication means that the array 
